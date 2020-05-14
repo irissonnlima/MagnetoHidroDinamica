@@ -1,5 +1,5 @@
 # Magneto-Hidrodinâmica
-<img src="./img/index.png">
+<img src="./img/index.jpg">
 <!---
 <sup>subscripted</sup>
 --->
