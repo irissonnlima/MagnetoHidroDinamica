@@ -383,5 +383,6 @@ B = [0,1,0]
 E = [0,0,1]
 nome = "irisson"
 p1 = Particula(B,E)
+p1.Posicoes3D()
 p1.Plotar3D()
 
