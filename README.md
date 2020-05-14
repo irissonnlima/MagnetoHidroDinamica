@@ -1,2 +1,3 @@
-# MagnetoHidroDinamica
-Repositório de estudos sobre Magneto-Hidrodinâmica
+# Magneto-HidroDinâmica
+<img src="./img/index.png">
+
