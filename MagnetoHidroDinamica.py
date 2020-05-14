@@ -187,24 +187,24 @@ class Particula:
             
             Parâmetros
             ----------
-            Titulo:     str (Opcional)
-                        Atribui um título ao gráfico.
-            EixoPadrao: str (Opcional)
-                        Seleciona o eixo a ser utilisado. \n
-                        >>= aceita os parâmetros:
+            Titulo:      str (Opcional)
+                         Atribui um título ao gráfico.
+            EixoPadrao:  str (Opcional)
+                         Seleciona o eixo a ser utilisado. \n
+                         >>= aceita os parâmetros:
                             ~~> 'xy' \n
                             ~~> 'xz' \n
                             ~~> 'yz' \n
                             
-            EixoX:      str (Opcional)
-                        Atribui um nome ao eixo X.
-            EixoY:      str (Opcional)
-                        Atribui um nome ao eixo Y.
-            Salvar:     boll (Opcional)
-                        Permite salvar um arquivo com o nome sendo igual ao titulo do gráfico.
-            Extencao:   str (Opcional)
-                        Atribui uma extenção ao arquivo salvo. \n
-                        Por padrão é salvo como 'svg' mas aceita todos os outros formatos de imagem.
+            EixoX:       str (Opcional)
+                         Atribui um nome ao eixo X.
+            EixoY:       str (Opcional)
+                         Atribui um nome ao eixo Y.
+            Salvar:      boll (Opcional)
+                         Permite salvar um arquivo com o nome sendo igual ao titulo do gráfico.
+            Extencao:    str (Opcional)
+                         Atribui uma extenção ao arquivo salvo. \n
+                         Por padrão é salvo como 'svg' mas aceita todos os outros formatos de imagem.
             
         """
         
@@ -233,6 +233,22 @@ class Particula:
         plt.show()
         
     def Animacao2D(self,Nome="Animacao2D",EixoPadrao = 'xy', Intervalo=5):
+        """
+
+        Parâmetros
+        ----------
+        Nome:           str (opcional)
+                         Passa o nome do arquivo que será salvo.
+        EixoPadrao:     str (opcional)
+                         Seleciona o plano que será animado.\n
+                            >>= aceita os parâmetros:
+                                ~~> 'xy' \n
+                                ~~> 'xz' \n
+                                ~~> 'yz' \n
+        Intervalo:      int (optional)
+                         Seleciona o tempo em ms(milisegundos) entre os frames animados.
+
+        """
         import matplotlib.animation as animate
         
         EixoPadrao = EixoPadrao.lower()
@@ -366,7 +382,6 @@ class Particula:
 B = [0,1,0]
 E = [0,0,1]
 nome = "irisson"
-p1 = Particula(B,E)  
-p1.Posicoes3D()
-p1.Plotar2D()
+p1 = Particula(B,E)
+p1.Plotar3D()
 
