@@ -136,7 +136,7 @@ class Particula:
             
         return self.X, self.Y, self.Z
     
-    def Plotar3D(self, Titulo='Plotagem3D', EixoX = 'X', EixoY = 'Y', EixoZ = 'Z',Salvar = False,Extencao = 'svg'):
+    def Plot3D(self, Titulo='Plotagem3D', EixoX = 'X', EixoY = 'Y', EixoZ = 'Z',Salvar = False,Extencao = 'svg'):
         """
             Plota um gráfico 3D do deslocamento da partícula a cada instante
             
@@ -177,7 +177,7 @@ class Particula:
             fig.savefig(Titulo + '.' + Extencao)
         plt.show()
         
-    def Plotar2D(self, Titulo = 'Plotagem2D',EixoPadrao = 'xy', EixoX = 'X', EixoY = 'Y', Salvar = False, Extencao = 'svg'):
+    def Plot2D(self, Titulo = 'Plotagem2D',EixoPadrao = 'xy', EixoX = 'X', EixoY = 'Y', Salvar = False, Extencao = 'svg'):
         """
             Plota um gráfico 3D do deslocamento da partícula a cada instante
             
@@ -228,7 +228,7 @@ class Particula:
             fig.savefig(Titulo + '.' + Extencao)
         plt.show()
         
-    def Animacao2D(self,Nome="Animacao2D",EixoPadrao = 'xy', Intervalo=5):
+    def Animate2D(self,Nome="Animacao2D",EixoPadrao = 'xy', Intervalo=5):
         """
 
         Parâmetros
@@ -371,4 +371,7 @@ class Particula:
         animation.save(filename = Nome + ".gif")
         plt.close()
         print("Animação Salvo com sucesso!")
+        
+        
+        
 
