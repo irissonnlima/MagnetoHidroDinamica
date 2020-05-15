@@ -82,8 +82,8 @@ class Particula:
         assert len  (vE) == 3,      "VariavelERROR: O componente vE deve ser tridimensional!"
         assert len   (T) == 2,      "VariavelERROR: O componente T deve conter apenas 2 espaços!"
         
-        self.B  = np.array(vB, dtype = np.float64)
-        self.E  = np.array(vE, dtype = np.float64)
+        self.B  = np.array(vB)
+        self.E  = np.array(vE)
         self.n  = n
         self._T = T
         self.t  = np.linspace(self._T[0],self._T[1],self.n)  #Vetor com os tempos dos intervalos solicitados
@@ -95,11 +95,11 @@ class Particula:
         self.vD = self.mE/self.mB                           #Velocidade de Drift
         self.w  = self.q*self.mB/self.m                     # Frência de oscilação
         self.r  = self.m*self.vD/(self.q*self.mB)           # Raio de Drift
-        self.X  = np.zeros(self.n, dtype = np.float64)
-        self.Y  = np.zeros(self.n, dtype = np.float64)
-        self.Z  = np.zeros(self.n, dtype = np.float64)
+        self.X  = np.zeros(self.n)
+        self.Y  = np.zeros(self.n)
+        self.Z  = np.zeros(self.n)
         
-    def Posicoes3D(self, export = False, nome = "Posicao3D"):
+    def calcPosicao(self, export = False, nome = "Posicao3D"):
         """
             Calcula o Posicionamento tridimensional da partícula
             
@@ -112,17 +112,16 @@ class Particula:
                     Atribui um nome ao arquivo exportado pelo programa.
             
         """
-        t = self.t
         
         vPB = np.zeros(self.n)                          # Vetor velocidadeParalelaB(Campo de indução)
         for i in range(self.n):
-            vPB[i] = self.q*self.mE*t[i]/self.m+self.vi
+            vPB[i] = (self.q * self.mE * self.t[i] / self.m) + self.vi
             
         #Posições:
         for i in range(self.n):
-            self.X[i] = self.r * self.w * np.cos(self.w*t[i]) + self.vD*t[i]
-            self.Y[i] = self.r * self.w * np.sin(self.w*t[i])
-            self.Z[i] = vPB[i] * t[i]
+            self.X[i] = self.r * self.w * np.cos(self.w * self.t[i]) + self.vD * self.t[i]
+            self.Y[i] = self.r * self.w * np.sin(self.w * self.t[i])
+            self.Z[i] = vPB[i] * self.t[i]
         
         #Exportar arquivo de dados:
         if export == True:
@@ -136,7 +135,7 @@ class Particula:
             
         return self.X, self.Y, self.Z
     
-    def Plot3D(self, Titulo='Plotagem3D', EixoX = 'X', EixoY = 'Y', EixoZ = 'Z',Salvar = False,Extencao = 'svg'):
+    def plot3D(self, Titulo='Plotagem3D', EixoX = 'X', EixoY = 'Y', EixoZ = 'Z',Salvar = False,Extencao = 'svg'):
         """
             Plota um gráfico 3D do deslocamento da partícula a cada instante
             
@@ -177,7 +176,7 @@ class Particula:
             fig.savefig(Titulo + '.' + Extencao)
         plt.show()
         
-    def Plot2D(self, Titulo = 'Plotagem2D',EixoPadrao = 'xy', EixoX = 'X', EixoY = 'Y', Salvar = False, Extencao = 'svg'):
+    def plot2D(self, Titulo = 'Plotagem2D',EixoPadrao = 'xy', EixoX = 'X', EixoY = 'Y', Salvar = False, Extencao = 'svg'):
         """
             Plota um gráfico 3D do deslocamento da partícula a cada instante
             
@@ -228,7 +227,7 @@ class Particula:
             fig.savefig(Titulo + '.' + Extencao)
         plt.show()
         
-    def Animate2D(self,Nome="Animacao2D",EixoPadrao = 'xy', Intervalo=5):
+    def animate2D(self,Nome="Animacao2D",EixoPadrao = 'xy', Intervalo=5):
         """
 
         Parâmetros
