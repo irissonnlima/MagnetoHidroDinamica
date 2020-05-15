@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu May 14 00:53:50 2020
 
-~@author: irisson
-"""
 #%% Classe Das Partículas
 import numpy as np
 from datetime import datetime
