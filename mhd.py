@@ -5,6 +5,7 @@ import numpy as np
 from datetime import datetime
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
+from scipy.integrate import odeint
 
 class Particula:
     
@@ -15,7 +16,8 @@ class Particula:
     
     """
     
-    def __init__(self,vB:list,vE:list,n=1000,T=[0,1],q=1.6e-19,m=9.11e-22,vi=0.0):
+    def __init__(self,vB:list,vE:list,n=1000,T=[0,1],q=1.6e-19,m=9.11e-22,vi=[0.0, 0.0, 0.0]
+                 ,coordenadas = [0.0 ,0.0 ,0.0]):
         
         """
             Inicializar Variáveis da partícula
@@ -34,8 +36,15 @@ class Particula:
                 Valor da carga da partícula.
             m:  float (opcional),   Valor padrão => 9.11e-22
                 Valor da massa da partícula.
-            vi: float (opcional),   Valor padrão => 0.0
-                Valor da velocidade inicial paralelo ao campo B.
+            vi: list (opcional),   Valor padrão => [0.0, 0.0, 0.0]
+                Valor da velocidade inicial da partícula.
+            coordenadas: list (opcional),   Valor padrão => [0.0, 0.0, 0.0]
+                Valor da coordenada inicial da partícula.
+            export: boll (Opcional)
+                    Permite Salvar um arquivo .mhd (Magneto-HidroDinâmica). \n
+                    >>= este arquivo contem os dados do rastreameno da partícula analisada detalhadamente
+            nome:   str (Opcional)
+                    Atribui um nome ao arquivo exportado pelo programa.
             Objetos
             -------
             Os objetos podem ser acessados para extrair ou modificar os dados.
@@ -65,8 +74,8 @@ class Particula:
             Z:  np.Array
                 Retorna um Vetor das Divisões de espaços na coordena Z do eixo. \n
                 >>=[VARIÁVEL DEVE SER INICIALIZADA], Objeto => Posicoes3D
-            vi: float 
-                Retorna a velocidade inicial da partícula.
+            vi: np.Array 
+                Retorna o vetor velocidade inicial da partícula.
             mE: float
                 Retorna o módulo do campo elétrico.
             mB: float
@@ -89,7 +98,7 @@ class Particula:
         self.t  = np.linspace(self._T[0],self._T[1],self.n)  #Vetor com os tempos dos intervalos solicitados
         self.q  = q
         self.m  = m
-        self.vi = vi
+        self.vi = np.array(vi)
         self.mE = np.linalg.norm(self.E)                    # Módulo de E
         self.mB = np.linalg.norm(self.B)                    # Módulo de B
         self.vD = self.mE/self.mB                           #Velocidade de Drift
@@ -98,32 +107,41 @@ class Particula:
         self.X  = np.zeros(self.n)
         self.Y  = np.zeros(self.n)
         self.Z  = np.zeros(self.n)
+        self.coordenadas = coordenadas
+        
         
     def calcPosicao(self, export = False, nome = "Posicao3D"):
-        """
-            Calcula o Posicionamento tridimensional da partícula
-            
-            Parâmetros
-            ----------
-            export: boll (Opcional)
-                    Permite Salvar um arquivo .mhd (Magneto-HidroDinâmica). \n
-                    >>= este arquivo contem os dados do rastreameno da partícula analisada detalhadamente
-            nome:   str (Opcional)
-                    Atribui um nome ao arquivo exportado pelo programa.
-            
-        """
         
-        vPB = np.zeros(self.n)                          # Vetor velocidadeParalelaB(Campo de indução)
-        for i in range(self.n):
-            vPB[i] = (self.q * self.mE * self.t[i] / self.m) + self.vi
-            
-        #Posições:
-        for i in range(self.n):
-            self.X[i] = self.r * self.w * np.cos(self.w * self.t[i]) + self.vD * self.t[i]
-            self.Y[i] = self.r * self.w * np.sin(self.w * self.t[i])
-            self.Z[i] = vPB[i] * self.t[i]
+        E  =     self.E
+        B  =     self.B
+        m  =     self.m
+        q  =     self.q
+        c  =     self.coordenadas
+        v0 =     self.vi
+        t  =     self.t
+        c  =     self.coordenadas
+        p0 =     [c[0],v0[0],c[1],v0[1],c[2],v0[2]]
         
-        #Exportar arquivo de dados:
+        def edo(p,t):
+            x,vx,y,vy,z,vz = p  
+            dvx = q/m*(E[0]+ vy*B[2] - vz*B[1])
+            dvy = q/m*(E[1]+ vz*B[0] - vx*B[2])
+            dvz = q/m*(E[2]+ vx*B[1] - vy*B[0])
+            s = [vx,dvx,vy,dvy,vz,dvz]
+            return s
+        
+        ssol = odeint(edo, p0, t)
+        
+        u = ssol[:,1]
+        v = ssol[:,3]
+        w = ssol[:,5]
+        
+        self.X = ssol[:,0]
+        self.Y = ssol[:,2]
+        self.Z = ssol[:,4]
+        self.V = np.array([ u, v, w ])
+         
+         #Exportar arquivo de dados:
         if export == True:
             hoje = datetime.now()
             arquivo = open(nome + '.mhd','a')
@@ -162,7 +180,7 @@ class Particula:
             if not self.X[i] == 0 and self.Y[i] == 0 and self.Z[i] == 0:
                 token = True
         
-        assert token == True, 'PlotagemERROR: Componentes X, Y e Z vazias, Execute Posicoes3D() antes de Plotar!!'
+        #assert token == True, 'PlotagemERROR: Componentes X, Y e Z vazias, Execute Posicoes3D() antes de Plotar!!'
         
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
@@ -208,7 +226,7 @@ class Particula:
             if not self.X[i] == 0 and self.Y[i] == 0 and self.Z[i] == 0:
                 token = True
         
-        assert token == True, 'PlotagemERROR: Componentes X, Y e Z vazias, Execute Posicoes3D() antes de Plotar!!'
+        #assert token == True, 'PlotagemERROR: Componentes X, Y e Z vazias, Execute Posicoes3D() antes de Plotar!!'
         
         EixoPadrao = EixoPadrao.lower()
         assert EixoPadrao == 'xy' or EixoPadrao == 'xz' or EixoPadrao == 'yz','PlotagemERROR: Variável EixoPadrao Preenchida incorretamente!!'
