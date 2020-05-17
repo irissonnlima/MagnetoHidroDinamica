@@ -6,7 +6,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
 from scipy.integrate import odeint
-
+import re
 class Particula:
     
     """
@@ -101,6 +101,7 @@ class Particula:
         self.Z  = np.zeros(self.n)
         self.coordenadas = coordenadas
         
+        self.calcPosicao()
         
     def calcPosicao(self, export = False, nome = "Posicao3D"):
         """
@@ -149,20 +150,95 @@ class Particula:
         if export == True:
             hoje = datetime.now()
             arquivo = open(nome + '.mhd','a')
-            arquivo.write('%%C  ' + hoje.strftime('%d/%m/%Y %H:%M') + '\n')
+            arquivo.write('%%C \t' + hoje.strftime('%d/%m/%Y %H:%M') + '\n')
             i=0
             for i in range(self.n):
-                arquivo.write(str(self.X[i]) + '  ||  ' + str(self.Y[i]) + '  ||  ' + str(self.Z[i]) + '\n')
+                arquivo.write(str(self.X[i]) + '\t||\t' + str(self.Y[i]) + '\t||\t' + str(self.Z[i]) + '\n')
             arquivo.close()
             
         return self.X, self.Y, self.Z
-    
-    def plot3D(self, Titulo='Plotagem3D', EixoX = 'X', EixoY = 'Y', EixoZ = 'Z',Salvar = False,Extencao = 'svg'):
+    def plotVel(self, EixoPadrao, Titulo = 'Disposição das velocidades',
+                    Trajetoria = True,EixoX = 'X', EixoY = 'Y',Unidade='', Salvar = False, Extencao = 'svg'):
         """
-            Plota um gráfico 3D do deslocamento da partícula a cada instante
+            Plota um gráfico 2D do deslocamento da partícula a cada instante e o Vetor Velocidade correspondente.
             
             Parâmetros
             ----------
+            EixoPadrao:  str
+                         Seleciona o eixo a ser utilisado. \n
+                         >>= aceita os parâmetros:
+                            ~~> 'xy' \n
+                            ~~> 'xz' \n
+                            ~~> 'yz' \n
+            Titulo:     str (Opcional)
+                        Atribui um título ao gráfico.
+            Trajetoria: boll (Opcional)
+                        Plota a trajetoria juntamente com os vetores velocidade ao gráfico.
+            EixoX:      str (Opcional)
+                        Atribui um nome ao eixo X.
+            EixoY:      str (Opcional)
+                        Atribui um nome ao eixo Y.
+            Unidade:    str (Opcional)
+                        Plota a unidade no gráfico.
+            Salvar:     boll (Opcional)
+                        Permite salvar um arquivo com o nome sendo igual ao titulo do gráfico.
+            Extencao:   str (Opcional)
+                        Atribui uma extenção ao arquivo salvo. \n
+                        Por padrão é salvo como 'svg' mas aceita todos os outros formatos de imagem.
+            
+        """
+        
+        U = re.split('/',Unidade)
+        
+        if EixoPadrao == 'xy' :
+            X = self.X
+            Y = self.Y
+            Vt = self.V
+            Vx = Vt[0,:]
+            Vy = Vt[1,:]
+        elif EixoPadrao == 'xz' :
+            X = self.X
+            Y = self.Z
+            Vt = self.V
+            Vx = Vt[0,:]
+            Vy = Vt[2,:]
+        elif EixoPadrao == 'yz' :
+            X = self.Y
+            Y = self.Z
+            Vt = self.V
+            Vx = Vt[1,:]
+            Vy = Vt[2,:]
+        
+        fig, ax = plt.subplots()
+        ax.set_title(Titulo)
+        M = np.hypot(Vx, Vy)
+        Q = ax.quiver(X,Y,Vx, Vy, M, units='x')
+        if not Unidade == '' :
+            ax.quiverkey(Q, 0.9, 0.9, 1, r"$1 \frac{" + U[0] + "}{" + U[1] + "}$", labelpos='E', coordinates='figure')
+        
+        if Trajetoria == True :
+            plt.plot(X,Y)
+        
+        if Salvar == True:
+                fig.savefig(Titulo + '.' + Extencao)
+        
+        ax.set_xlabel(EixoX)
+        ax.set_ylabel(EixoY)
+        plt.show()
+    
+    def plot(self, EixoPadrao, Titulo='Gráfico', EixoX = 'X', EixoY = 'Y', EixoZ = 'Z', Salvar = False, Extencao = 'svg'):
+        """
+            Plota um gráfico 3D ou 2D do deslocamento da partícula a cada instante.
+            
+            Parâmetros
+            ----------
+            EixoPadrao:  str
+                         Seleciona o eixo a ser utilisado. \n
+                         >>= aceita os parâmetros:
+                            ~~> 'xyz'\n
+                            ~~> 'xy' \n
+                            ~~> 'xz' \n
+                            ~~> 'yz' \n
             Titulo:     str (Opcional)
                         Atribui um título ao gráfico.
             EixoX:      str (Opcional)
@@ -178,76 +254,43 @@ class Particula:
                         Por padrão é salvo como 'svg' mas aceita todos os outros formatos de imagem.
             
         """
-        
-        token = False
-        for i in range(self.n):
-            if not self.X[i] == 0 and self.Y[i] == 0 and self.Z[i] == 0:
-                token = True
-        
-        #assert token == True, 'PlotagemERROR: Componentes X, Y e Z vazias, Execute Posicoes3D() antes de Plotar!!'
-        
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        ax.plot(self.X, self.Y, self.Z, zdir='z')
-        ax.set_xlabel(EixoX)
-        ax.set_ylabel(EixoY)
-        ax.set_zlabel(EixoZ)
-        
-        plt.title(Titulo)
-        if Salvar == True:
-            fig.savefig(Titulo + '.' + Extencao)
-        plt.show()
-        
-    def plot2D(self, Titulo = 'Plotagem2D',EixoPadrao = 'xy', EixoX = 'X', EixoY = 'Y', Salvar = False, Extencao = 'svg'):
-        """
-            Plota um gráfico 3D do deslocamento da partícula a cada instante
-            
-            Parâmetros
-            ----------
-            Titulo:      str (Opcional)
-                         Atribui um título ao gráfico.
-            EixoPadrao:  str (Opcional)
-                         Seleciona o eixo a ser utilisado. \n
-                         >>= aceita os parâmetros:
-                            ~~> 'xy' \n
-                            ~~> 'xz' \n
-                            ~~> 'yz' \n
-                            
-            EixoX:       str (Opcional)
-                         Atribui um nome ao eixo X.
-            EixoY:       str (Opcional)
-                         Atribui um nome ao eixo Y.
-            Salvar:      boll (Opcional)
-                         Permite salvar um arquivo com o nome sendo igual ao titulo do gráfico.
-            Extencao:    str (Opcional)
-                         Atribui uma extenção ao arquivo salvo. \n
-                         Por padrão é salvo como 'svg' mas aceita todos os outros formatos de imagem.
-            
-        """
-        
-        token = False
-        for i in range(self.n):
-            if not self.X[i] == 0 and self.Y[i] == 0 and self.Z[i] == 0:
-                token = True
-        
-        #assert token == True, 'PlotagemERROR: Componentes X, Y e Z vazias, Execute Posicoes3D() antes de Plotar!!'
-        
         EixoPadrao = EixoPadrao.lower()
-        assert EixoPadrao == 'xy' or EixoPadrao == 'xz' or EixoPadrao == 'yz','PlotagemERROR: Variável EixoPadrao Preenchida incorretamente!!'
+        assert EixoPadrao == 'xy' or EixoPadrao == 'xz' or EixoPadrao == 'yz' or EixoPadrao == 'xyz','PlotagemERROR: Variável EixoPadrao Preenchida incorretamente!!'
+        assert type(EixoPadrao) == str , 'PlotagemERROR: Variável EixoPadrao só aceita valores do tipo str.'
         
-        fig, ax = plt.subplots()
-        ax.set(xlabel = EixoX, ylabel = EixoY, title = Titulo)
-        
-        if EixoPadrao == 'xy' :
-            ax.plot(self.X,self.Y)
-        elif EixoPadrao == 'xz' :
-            ax.plot(self.X,self.Z)
-        elif EixoPadrao == 'yz' :
-            ax.plot(self.Y,self.Z)
-        
-        if Salvar == True:
-            fig.savefig(Titulo + '.' + Extencao)
-        plt.show()
+        if EixoPadrao == 'xyz' :
+            
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
+            ax.plot(self.X, self.Y, self.Z, zdir='z')
+            ax.set_xlabel(EixoX)
+            ax.set_ylabel(EixoY)
+            ax.set_zlabel(EixoZ)
+            
+            plt.title(Titulo)
+            if Salvar == True:
+                fig.savefig(Titulo + '.' + Extencao)
+            plt.show()
+        else :
+            fig, ax = plt.subplots()
+            ax.set(xlabel = EixoX, ylabel = EixoY, title = Titulo)
+            
+            if EixoPadrao == 'xy' :
+                ax.plot(self.X,self.Y)
+                ax.set_xlabel(EixoX)
+                ax.set_ylabel(EixoY)
+            elif EixoPadrao == 'xz' :
+                ax.plot(self.X,self.Z)
+                ax.set_xlabel(EixoX)
+                ax.set_ylabel(EixoZ)
+            elif EixoPadrao == 'yz' :
+                ax.plot(self.Y,self.Z)
+                ax.set_xlabel(EixoY)
+                ax.set_ylabel(EixoZ)
+            
+            if Salvar == True:
+                fig.savefig(Titulo + '.' + Extencao)
+            plt.show()  
         
     def animate2D(self,Nome="Animacao2D",EixoPadrao = 'xy', Intervalo=5):
         """
@@ -273,36 +316,25 @@ class Particula:
         
         fig, ax = plt.subplots()
         line, = ax.plot(0, 0)
-        Max = [0,0]
-        Min = [0,0]
+        Max = np.array([0,0])
+        Min = np.array([0,0])
         A   = []
         B   = []
         
         if EixoPadrao == 'xy' :
-            #Mecanismo de Ordenamento dos Eixos
             MecX = self.X
             MecY = self.Y
-            Max[0] = MecX[0]
-            Max[1] = MecY[0]
-            Min[0] = MecX[0]
-            Min[1] = MecY[0]
-            i=-1
-            for i in range(self.n-1):
-                if MecX[i] >= Max[0]:
-                    Max[0] = MecX[i]
-                if MecY[i] >= Max[1]:
-                    Max[1] = MecY[i]
-                if MecX[i] <= Min[0]:
-                    Min[0] = MecX[i]
-                if MecY[i] <= Min[1]:
-                    Min[1] = MecY[i]
-            Max[0] *= 1.1
-            Max[1] *= 1.1
-            Min[0] *= 1.1
-            Min[1] *= 1.1
+            Max[0] = max(MecX)
+            Max[1] = max(MecY)
+            Min[0] = min(MecX)
+            Min[1] = min(MecY)
+
+            Max = Max*1.5
+            Min = Min*1.5
+            
             ax.set_xlim(Min[0],Max[0])
             ax.set_ylim(Min[1],Max[1])
-           #Fim do Mecanismo     
+            
             def f(x):
                 i=0
                 while (x != self.X[i]):
@@ -315,30 +347,18 @@ class Particula:
                 return line,
             animation = animate.FuncAnimation(fig, func = f,frames=self.X, interval = Intervalo )
         elif EixoPadrao == 'yz' :
-            #Mecanismo de Ordenamento dos Eixos
             MecX = self.Y
             MecY = self.Z
-            Max[0] = MecX[0]
-            Max[1] = MecY[0]
-            Min[0] = MecX[0]
-            Min[1] = MecY[0]
-            i=-1
-            for i in range(self.n-1):
-                if MecX[i] >= Max[0]:
-                    Max[0] = MecX[i]
-                if MecY[i] >= Max[1]:
-                    Max[1] = MecY[i]
-                if MecX[i] <= Min[0]:
-                    Min[0] = MecX[i]
-                if MecY[i] <= Min[1]:
-                    Min[1] = MecY[i]
-            Max[0] *= 1.1
-            Max[1] *= 1.1
-            Min[0] *= 1.1
-            Min[1] *= 1.1
+            Max[0] = max(MecX)
+            Max[1] = max(MecY)
+            Min[0] = min(MecX)
+            Min[1] = min(MecY)
+
+            Max = Max*1.5
+            Min = Min*1.5
+        
             ax.set_xlim(Min[0],Max[0])
             ax.set_ylim(Min[1],Max[1])
-           #Fim do Mecanismo   
              
             def f(x):
                 i=0
@@ -352,30 +372,18 @@ class Particula:
                 return line,
             animation = animate.FuncAnimation(fig, func = f,frames=self.Y, interval = Intervalo )
         elif EixoPadrao == 'xz' :
-            #Mecanismo de Ordenamento dos Eixos
             MecX = self.X
             MecY = self.Z
-            Max[0] = MecX[0]
-            Max[1] = MecY[0]
-            Min[0] = MecX[0]
-            Min[1] = MecY[0]
-            i=-1
-            for i in range(self.n-1):
-                if MecX[i] >= Max[0]:
-                    Max[0] = MecX[i]
-                if MecY[i] >= Max[1]:
-                    Max[1] = MecY[i]
-                if MecX[i] <= Min[0]:
-                    Min[0] = MecX[i]
-                if MecY[i] <= Min[1]:
-                    Min[1] = MecY[i]
-            Max[0] *= 1.1
-            Max[1] *= 1.1
-            Min[0] *= 1.1
-            Min[1] *= 1.1
+            Max[0] = max(MecX)
+            Max[1] = max(MecY)
+            Min[0] = min(MecX)
+            Min[1] = min(MecY)
+
+            Max = Max*1.5
+            Min = Min*1.5
+            
             ax.set_xlim(Min[0],Max[0])
             ax.set_ylim(Min[1],Max[1])
-           #Fim do Mecanismo   
             
             def f(x):
                 i=0
