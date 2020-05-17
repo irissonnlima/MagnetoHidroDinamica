@@ -13,78 +13,70 @@ class Particula:
     
         Recebe no mínimo dois parâmetros para retornar todos os dados os dados da partícula descrita.
         Procura-se deixar o programa extremamente customizável para atender a magnetohidrodinâmica.
-    
+        >>= NECESSÀRIO inicializar Variáveis da partícula
+        
+        Parâmetros
+        ----------
+        vB: List EXCLUSIVAMENTE tridimensional, exemplo => (0,0,0)
+            Campo de indução magnética do sistema.
+        vE: List EXCLUSIVAMENTE tridimensional, exmplo => (0,0,0)
+            Campo elétrico do sistema.
+        n:  int (opcional),     Valor padrão => 100
+            Número de subdivisões do Tempo T.
+        T:  list (opcional) EXCLUSIVAMENTE bidimensional, Valor padrão => [0,1]
+            Tempo em segundos do primeiro intervalo e do segundo.
+        q:  float (opcional),   Valor padrão => 1.6e-19
+            Valor da carga da partícula.
+        m:  float (opcional),   Valor padrão => 9.11e-22
+            Valor da massa da partícula.
+        vi: list (opcional),   Valor padrão => [0.0, 0.0, 0.0]
+            Valor da velocidade inicial da partícula.
+        coordenadas: list (opcional),   Valor padrão => [0.0, 0.0, 0.0]
+            Valor da coordenada inicial da partícula.
+        
+        Objetos
+        -------
+        Os objetos podem ser acessados para extrair ou modificar os dados.
+        
+        B:  np.Array tridimensional
+            Retorna Vetor Campo de indução magnética. 
+        E:  np.Array tridimensional
+            Retorna Vetor Campo elétrico.
+        n:  int
+            Retorna Número de componentes do vos Vetores t, X, Y e Z
+        t:  np.Array
+            Retorna um Vetor das divisões do intervalo de tempo selecionado.
+        q:  float
+            Retorna a carga da partícula.
+        m:  float
+            Retorna a massa da partícula.
+        w:  float
+            Retorna a frequência de oscilação da partícula.
+        r:  float
+            Retorna o raio de Drift da partícula.
+        X:  np.Array
+            Retorna um Vetor das Divisões de espaços na coordena X do eixo. \n
+            >>=[VARIÁVEL DEVE SER INICIALIZADA], Objeto => Posicoes3D
+        Y:  np.Array
+            Retorna um Vetor das Divisões de espaços na coordena Y do eixo. \n
+            >>=[VARIÁVEL DEVE SER INICIALIZADA], Objeto => Posicoes3D
+        Z:  np.Array
+            Retorna um Vetor das Divisões de espaços na coordena Z do eixo. \n
+            >>=[VARIÁVEL DEVE SER INICIALIZADA], Objeto => Posicoes3D
+        vi: np.Array 
+            Retorna o vetor velocidade inicial da partícula.
+        mE: float
+            Retorna o módulo do campo elétrico.
+        mB: float
+            Retorna o módulo do campo magnético de indução.
+        vD: float
+            Retorna a velocidade de Drift da partícula.
+            
+        
     """
     
-    def __init__(self,vB:list,vE:list,n=1000,T=[0,1],q=1.6e-19,m=9.11e-22,vi=[0.0, 0.0, 0.0]
-                 ,coordenadas = [0.0 ,0.0 ,0.0]):
+    def __init__(self,vB:list,vE:list,n=1000,T=[0,1],q=1.6e-19,m=9.11e-22,vi=[0.0, 0.0, 0.0], coordenadas = [0.0 ,0.0 ,0.0]):
         
-        """
-            Inicializar Variáveis da partícula
-            
-            Parâmetros
-            ----------
-            vB: List EXCLUSIVAMENTE tridimensional, exemplo => (0,0,0)
-                Campo de indução magnética do sistema.
-            vE: List EXCLUSIVAMENTE tridimensional, exmplo => (0,0,0)
-                Campo elétrico do sistema.
-            n:  int (opcional),     Valor padrão => 100
-                Número de subdivisões do Tempo T.
-            T:  list (opcional) EXCLUSIVAMENTE bidimensional, Valor padrão => [0,1]
-                Tempo em segundos do primeiro intervalo e do segundo.
-            q:  float (opcional),   Valor padrão => 1.6e-19
-                Valor da carga da partícula.
-            m:  float (opcional),   Valor padrão => 9.11e-22
-                Valor da massa da partícula.
-            vi: list (opcional),   Valor padrão => [0.0, 0.0, 0.0]
-                Valor da velocidade inicial da partícula.
-            coordenadas: list (opcional),   Valor padrão => [0.0, 0.0, 0.0]
-                Valor da coordenada inicial da partícula.
-            export: boll (Opcional)
-                    Permite Salvar um arquivo .mhd (Magneto-HidroDinâmica). \n
-                    >>= este arquivo contem os dados do rastreameno da partícula analisada detalhadamente
-            nome:   str (Opcional)
-                    Atribui um nome ao arquivo exportado pelo programa.
-            Objetos
-            -------
-            Os objetos podem ser acessados para extrair ou modificar os dados.
-            
-            B:  np.Array tridimensional
-                Retorna Vetor Campo de indução magnética. 
-            E:  np.Array tridimensional
-                Retorna Vetor Campo elétrico.
-            n:  int
-                Retorna Número de componentes do vos Vetores t, X, Y e Z
-            t:  np.Array
-                Retorna um Vetor das divisões do intervalo de tempo selecionado.
-            q:  float
-                Retorna a carga da partícula.
-            m:  float
-                Retorna a massa da partícula.
-            w:  float
-                Retorna a frequência de oscilação da partícula.
-            r:  float
-                Retorna o raio de Drift da partícula.
-            X:  np.Array
-                Retorna um Vetor das Divisões de espaços na coordena X do eixo. \n
-                >>=[VARIÁVEL DEVE SER INICIALIZADA], Objeto => Posicoes3D
-            Y:  np.Array
-                Retorna um Vetor das Divisões de espaços na coordena Y do eixo. \n
-                >>=[VARIÁVEL DEVE SER INICIALIZADA], Objeto => Posicoes3D
-            Z:  np.Array
-                Retorna um Vetor das Divisões de espaços na coordena Z do eixo. \n
-                >>=[VARIÁVEL DEVE SER INICIALIZADA], Objeto => Posicoes3D
-            vi: np.Array 
-                Retorna o vetor velocidade inicial da partícula.
-            mE: float
-                Retorna o módulo do campo elétrico.
-            mB: float
-                Retorna o módulo do campo magnético de indução.
-            vD: float
-                Retorna a velocidade de Drift da partícula.
-                
-            
-        """
         assert type (vB) == list,   "VariavelERROR: O componente vB deve ser uma lista!"
         assert type (vE) == list,   "VariavelERROR: O componente vE deve ser uma lista!"
         assert len  (vB) == 3,      "VariavelERROR: O componente vB deve ser tridimensional!"
@@ -111,6 +103,18 @@ class Particula:
         
         
     def calcPosicao(self, export = False, nome = "Posicao3D"):
+        """
+        Calcula as posições da partícula, permite o retorno e exportação das triggers de dados
+        
+        Parâmetros
+        ----------
+        
+        export: boll (Opcional)
+                    Permite Salvar um arquivo .mhd (Magneto-HidroDinâmica). \n
+                    >>= este arquivo contem os dados do rastreameno da partícula analisada detalhadamente
+            nome:   str (Opcional)
+                    Atribui um nome ao arquivo exportado pelo programa.
+        """
         
         E  =     self.E
         B  =     self.B
