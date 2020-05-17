@@ -1,4 +1,4 @@
-
+<center>
 # Magneto-Hidrodinâmica
 <img src="./img/index.jpg">
 <sup>Imagem ilustrativa do esquema do funcionamento do propulsor VASIMR</sup>
@@ -16,3 +16,4 @@ O desenvolvimento dos programas e das bibliotecas tem como objetivo final simula
 <br>~>Fazer uso do Spyder como ambiente de desenvolvimento integrado (IDE):
 <br>~~>Instalar o Spyder pelo <a href="https://www.anaconda.com/">Anaconda</a>
   
+</center>
