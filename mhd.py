@@ -187,6 +187,8 @@ class Particula:
                         Por padrão é salvo como 'svg' mas aceita todos os outros formatos de imagem.
             
         """
+        assert EixoPadrao == 'xy' or EixoPadrao == 'xz' or EixoPadrao == 'yz' or EixoPadrao == 'xyz','PlotagemERROR: Variável EixoPadrao Preenchida incorretamente!!'
+        assert type(EixoPadrao) == str , 'PlotagemERROR: Variável EixoPadrao só aceita valores do tipo str.'
         
         U = re.split('/',Unidade)
         
