@@ -7,7 +7,12 @@ O desenvolvimento dos programas e das bibliotecas tem como objetivo final simula
 
 <h3>Recomendações</h3>
 <br>~> Implementar fontes com Programming Ligatures no IDE:
-<br>~>Essas fontes facilitam e embelezam a visualização do código e as ajudas, Explos:
-<br>~~><a href="https://github.com/tonsky/FiraCode">Fira Code</a>
+<br>~>Essas fontes facilitam e embelezam a visualização do código e as ajudas, Exemplos:
+<br>~~><a href="https://github.com/tonsky/FiraCode"><b>Fira Code (RECOMENDADO)</b></a>
 <br>~~><a href="https://github.com/i-tu/Hasklig">Haskling</a>
+<br>~~><a href="https://github.com/be5invis/Iosevka/releases">Iosevka</a>
+<br>~~><a href="https://github.com/ToxicFrog/Ligaturizer">Ligaturizer</a>
+<br>
+<br>~>Fazer uso do Spyder como ambiente de desenvolvimento integrado (IDE):
+<br>~~>Instalar o Spyder pelo <a href="https://www.anaconda.com/">Anaconda</a>
   
