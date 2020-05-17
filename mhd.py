@@ -75,7 +75,7 @@ class Particula:
         
     """
     
-    def __init__(self,vB:list,vE:list,n=1000,T=[0,1],q=1.6e-19,m=9.11e-22,vi=[0.0, 0.0, 0.0], coordenadas = [0.0 ,0.0 ,0.0]):
+    def __init__(self,vB:list,vE:list,n=250,T=[0,1],q=1.6e-19,m=9.11e-22,vi=[0.0, 0.0, 0.0], coordenadas = [0.0 ,0.0 ,0.0]):
         
         assert type (vB) == list,   "VariavelERROR: O componente vB deve ser uma lista!"
         assert type (vE) == list,   "VariavelERROR: O componente vE deve ser uma lista!"
