@@ -6,7 +6,7 @@
 O desenvolvimento dos programas e das bibliotecas tem como objetivo final simular e estudar a propulsão plasmática e sobretudo a Magneto-Hidrodinâmica.
 
 <h3>Recomendações</h3>
-<br>~> Implementar fontes com Programming Ligatures no IDE:
+<br>~> Implementar fontes com <i>Programming Ligatures</i> no IDE:
 <br>~>Essas fontes facilitam e embelezam a visualização do código e as ajudas, Exemplos:
 <br>~~><a href="https://github.com/tonsky/FiraCode"><b>Fira Code (RECOMENDADO)</b></a>
 <br>~~><a href="https://github.com/i-tu/Hasklig">Haskling</a>
