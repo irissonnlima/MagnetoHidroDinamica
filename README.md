@@ -9,5 +9,5 @@ O desenvolvimento dos programas e das bibliotecas tem como objetivo final simula
 <br><p>~> Implementar fontes com Programming Ligatures no IDE:
 <br><p>~>Essas fontes facilitam e embelezam a visualização do código e as ajudas, Explos:
 <br><p>~~><a href="https://github.com/tonsky/FiraCode">Fira Code</a>
-<br><p>~~><a href="https://github.com/i-tu/Hasklig">Haskling</a>
+<br>~~><a href="https://github.com/i-tu/Hasklig">Haskling</a>
   
